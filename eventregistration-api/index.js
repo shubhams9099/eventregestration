@@ -35,8 +35,8 @@ app.use("/", function (req, res) {
   res.send("required result not found");
 });
 
-app.use("/admin", adminRouter);
-app.use("/user", userRouter);
+// app.use("/admin", adminRouter);
+// app.use("/user", userRouter);
 
-var port = process.env.PORT || 8080;
+var port = 8080 || 8081;
 app.listen(port);
