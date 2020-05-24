@@ -31,12 +31,12 @@ app.use(function (req, res, next) {
 });
 app.use(bodyparser.json());
 
+app.use("/admin", adminRouter);
 app.use("/", function (req, res) {
   res.send("required result not found");
 });
 
-app.use("/admin", adminRouter);
-app.use("/user", userRouter);
+//app.use("/user", userRouter);
 
 var port = process.env.PORT || 8080;
 app.listen(port);
