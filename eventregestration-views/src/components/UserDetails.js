@@ -3,6 +3,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import {
   Grid,
   TextField,
+  FormLabel,
   InputLabel,
   Button,
   Typography,
@@ -29,10 +30,19 @@ const useStyles = makeStyles(theme => ({
 }));
 const UserDetails = () => {
   const [inputs, setInputs] = useState("");
-  const [reg_type, setRegType] = useState('');
-  const handleChange = (event)=> {
+  const [reg_type, setRegType] = useState("");
+  const handleChange = event => {
     setRegType(event.target.value);
-  }
+  };
+  const uploadImage = () => {};
+  const selectImage = event => {
+    let images = [];
+    for (var i = 0; i < event.target.files.length; i++) {
+      images[i] = event.target.files.item(i);
+    }
+    images = images.filter(image => image.name.match(/\.(jpeg|png)$/));
+
+  };
   const classes = useStyles();
   const handleInputs = event => {
     event.persist();
@@ -83,26 +93,55 @@ const UserDetails = () => {
             autoComplete="phone-no"
           />
         </Grid>
+        <Grid item xs={12} spacing={3}>
+        <Grid container>
+          <FormLabel component="label" className={classes.label}>
+            Upload ID proof
+          </FormLabel>
+            <input
+              name="id_image"
+              id="contained-button-file"
+              onChange={selectImage}
+              type="file"
+              className="form-control"
+            />
+          <Button
+            onClick={uploadImage}
+            color="primary"
+            variant="contained"
+            className={classes.button}
+            size="small"
+          >
+            Upload
+          </Button>
+        </Grid>
+      </Grid>
       </Grid>
       <Divider className={classes.selectEmpty} />
       <Typography variant="h6" gutterBottom className={classes.selectEmpty}>
         Regestration Details
       </Typography>
       <Grid container spacing={3}>
-        <Grid item xs={12} sm={6}>
-        <FormControl variant="outlined" className={classes.formControl}>
-        <InputLabel id="demo-simple-select-outlined-label">
-                            Regestration Type
-        </InputLabel>
-          <Select id="regestration_type" name="regestration_type" value={reg_type} onChange={handleChange}>
-            <MenuItem value="self">Self</MenuItem>
-            <MenuItem value="group">Group</MenuItem>
-            <MenuItem value="corporate">Corporate</MenuItem>
-            <MenuItem value="others">Others</MenuItem>
-          </Select>
+        <Grid item xs={12} sm={5}>
+          <FormControl variant="outlined" className={classes.formControl}>
+            <InputLabel id="demo-simple-select-outlined-label">
+              Regestration Type
+            </InputLabel>
+            <Select
+              id="regestration_type"
+              name="regestration_type"
+              value={reg_type}
+              onChange={handleChange}
+            >
+              <MenuItem value="self">Self</MenuItem>
+              <MenuItem value="group">Group</MenuItem>
+              <MenuItem value="corporate">Corporate</MenuItem>
+              <MenuItem value="others">Others</MenuItem>
+            </Select>
           </FormControl>
         </Grid>
-        <Grid item xs={12} sm={6}>
+        <Grid item xs={12} sm={4}></Grid>
+        <Grid item xs={12} sm={3}>
           <TextField
             name="no_tickets"
             id="no_tickets"
@@ -112,31 +151,7 @@ const UserDetails = () => {
           />
         </Grid>
       </Grid>
-      {/* <Grid item xs={12} >
-                    <Grid container>
-                        <FormLabel component='label' className={classes.label} >
-                            Upload Weavers/Artisan/Aadhar card
-                        </FormLabel>
-                        <div>
-                            <input
-                                name="id_image"
-                                id="contained-button-file"
-                                onChange={selcetImages}
-                                multiple
-                                type="file"
-                            />
-                            <Button onClick={uploadImages} color="primary" variant="contained" className={classes.button}>
-                                Upload
-                          </Button>
-                            <Typography className={classes.message} gutterBottom>
-                                {inputs.message || ''}
-                            </Typography>
-                        </div>
-
-
-                    </Grid>
-
-                </Grid> */}
+      
     </React.Fragment>
   );
 };

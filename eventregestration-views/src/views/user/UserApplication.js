@@ -3,7 +3,7 @@ import UserDefaultLayout from '../../layouts/UserDefaultLayout';
 import { Paper, Typography, StepButton, Stepper, Button, Step, StepLabel } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import UserDetails from '../../components/UserDetails';
-
+import Review from '../../components/Review'; 
 const useStyles = makeStyles(theme => ({
     appBar: {
         position: 'relative',
@@ -47,11 +47,11 @@ function UserApplication() {
         switch (step) {
             case 0:
               return <UserDetails />;
-        //     case 1:
-        //       return <Review />;
+            case 1:
+              return <Review />;
             default:
               throw new Error('Unknown step');
-          }
+         }
     };
 
     const submitApplication =()=>{
