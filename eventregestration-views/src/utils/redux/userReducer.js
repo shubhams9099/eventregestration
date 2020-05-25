@@ -2,12 +2,6 @@ import {SET_APPLICATION} from './userTypes';
 
 const initialState={
     application:{
-        fullname:"",
-        phone_no:"",
-        email_id:"",
-        id_image:"",
-        regestration_type:"",
-        no_tickets:""
     },
 }
 

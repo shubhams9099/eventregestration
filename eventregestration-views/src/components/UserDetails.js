@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import {connect} from 'react-redux';
+import {setApplication} from '../utils/redux';
 import { makeStyles } from "@material-ui/core/styles";
 import {
   Grid,
@@ -28,8 +30,8 @@ const useStyles = makeStyles(theme => ({
     color: "#263238"
   }
 }));
-const UserDetails = () => {
-  const [inputs, setInputs] = useState("");
+const UserDetails = (props) => {
+  const [inputs, setInputs] = useState(props.application);
   const [reg_type, setRegType] = useState("");
   const handleChange = event => {
     setRegType(event.target.value);
@@ -52,6 +54,9 @@ const UserDetails = () => {
     }));
   };
 
+  useEffect(() => {
+    props.setApplication(inputs);
+  }, [inputs])
   return (
     <React.Fragment>
       <Typography variant="h6">Personal Details</Typography>
@@ -130,8 +135,8 @@ const UserDetails = () => {
             <Select
               id="regestration_type"
               name="regestration_type"
-              value={reg_type}
-              onChange={handleChange}
+              onChange={handleInputs}
+              value={inputs.regestration_type || ''}
             >
               <MenuItem value="self">Self</MenuItem>
               <MenuItem value="group">Group</MenuItem>
@@ -142,11 +147,14 @@ const UserDetails = () => {
         </Grid>
         <Grid item xs={12} sm={4}></Grid>
         <Grid item xs={12} sm={3}>
-          <TextField
-            name="no_tickets"
-            id="no_tickets"
+        <TextField
+            required
             type="number"
+            id="no_tickets"
+            name="no_tickets"
             label="No of tickets"
+            onChange={handleInputs}
+            value={inputs.no_tickets || ""}
             fullWidth
           />
         </Grid>
@@ -156,4 +164,21 @@ const UserDetails = () => {
   );
 };
 
-export default UserDetails;
+const mapStateToProps = state => {
+  return {
+      application: state.application
+  }
+}
+
+const mapDispatchToProps= dispatch =>{
+  return{
+    setApplication: (application) => dispatch(setApplication(application))
+  }
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)
+
+(UserDetails);
