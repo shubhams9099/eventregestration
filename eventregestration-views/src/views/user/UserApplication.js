@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux'
-
+import axios from 'axios'
+import querystring from 'querystring'
 
 import UserDefaultLayout from '../../layouts/UserDefaultLayout';
 import { Paper, Typography, StepButton, Stepper, Button, Step, StepLabel } from '@material-ui/core';
@@ -58,7 +59,14 @@ function UserApplication(props) {
     };
 
     const submitApplication =()=>{
-
+      axios.post('http://localhost:8080/user/apply',querystring.stringify(props.application))
+      .then((res)=>{
+        if(res.status === 200)
+          setActiveStep(activeStep+1);
+      })
+      .catch((error)=>{
+        alert('Internal server error');
+      })
     };
     const handleNext = () => {
         if (activeStep === 1) {
@@ -90,8 +98,8 @@ function UserApplication(props) {
                     Your Application is submitted.
                 </Typography>
                   <Typography variant="subtitle1">
-                    Your Application number is ''. We have emailed your Application confirmation, and will
-                    send you an update when your Application will accepted.
+                    Your regestration is done successfully.
+                    Your Application number is: 
                 </Typography>
                 </React.Fragment>
               ) : (

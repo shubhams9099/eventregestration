@@ -4,6 +4,7 @@ var adminSchema = mongoose.Schema({
   email: String,
   password: String,
 });
+
 adminSchema.methods.generateHash = function (password) {
   return bcrypt.hashSync(password, bcrypt.genSaltSync(), null);
 };

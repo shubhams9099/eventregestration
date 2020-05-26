@@ -33,9 +33,7 @@ app.use(bodyparser.json());
 
 app.use("/admin", adminRouter);
 
-//app.use("/user", userRouter);
-
-// app.use("/admin", adminRouter);
+app.use("/user", userRouter);
 
 app.use("/", function (req, res) {
   res.send("required result not found");

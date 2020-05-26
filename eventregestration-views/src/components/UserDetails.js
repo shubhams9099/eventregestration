@@ -33,29 +33,39 @@ const useStyles = makeStyles(theme => ({
 const UserDetails = (props) => {
   const [inputs, setInputs] = useState(props.application);
   const [reg_type, setRegType] = useState("");
+  const [image,setImage] =useState("");
+  
   const handleChange = event => {
     setRegType(event.target.value);
   };
   const uploadImage = () => {};
-  const selectImage = event => {
-    let images = [];
-    for (var i = 0; i < event.target.files.length; i++) {
-      images[i] = event.target.files.item(i);
-    }
-    images = images.filter(image => image.name.match(/\.(jpeg|png)$/));
 
+  const selectImage = event => {
+    // setImage(URL.createObjectURL(event.target.files[0]));
+    setInputs({...inputs, [event.target.name]: URL.createObjectURL(event.target.files[0])})
   };
   const classes = useStyles();
   const handleInputs = event => {
     event.persist();
-    setInputs(inputs => ({
-      ...inputs,
-      [event.target.name]: event.target.value
-    }));
+
+    if(event.target.name === 'id_image'){
+      setInputs(inputs => ({
+        ...inputs,
+        [event.target.name]: image
+      }));
+    }
+    else{
+      setInputs(inputs => ({
+        ...inputs,
+        [event.target.name]: event.target.value
+      }));
+    }
+    
   };
 
   useEffect(() => {
     props.setApplication(inputs);
+
   }, [inputs])
   return (
     <React.Fragment>
@@ -158,6 +168,7 @@ const UserDetails = (props) => {
             fullWidth
           />
         </Grid>
+        
       </Grid>
       
     </React.Fragment>
