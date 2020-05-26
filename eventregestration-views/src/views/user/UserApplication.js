@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import { connect } from 'react-redux'
+
+
 import UserDefaultLayout from '../../layouts/UserDefaultLayout';
 import { Paper, Typography, StepButton, Stepper, Button, Step, StepLabel } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
@@ -36,7 +39,7 @@ const useStyles = makeStyles(theme => ({
       marginLeft: theme.spacing(1),
     }
   }));
-function UserApplication() {
+function UserApplication(props) {
     const classes = useStyles();
 
     const steps = ['Your Details', 'Review your details'];
@@ -118,4 +121,13 @@ function UserApplication() {
     )
 }
 
+// const mapStateToProps = state =>{
+//   return{
+//     application: state.application
+//   }
+// }
+// export default connect(
+//   mapStateToProps
+// ) 
+// (UserApplication);
 export default UserApplication;
