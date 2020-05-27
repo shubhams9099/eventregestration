@@ -49,7 +49,7 @@ function Review(props) {
       </Grid>
       <Grid container spacing={3}>
         <Grid item xs={12} sm={6}>
-            <img src={props.application.id_image} height="300px" width="300px" />  
+            <img src={props.application.local_image_path} height="300px" width="300px" />  
         </Grid>
       </Grid>
     </React.Fragment>

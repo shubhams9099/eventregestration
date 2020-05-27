@@ -47,6 +47,8 @@ function UserApplication(props) {
 
     const [activeStep, setActiveStep] = useState(0)
 
+    const [regNo, setRegNo] = useState("")
+
     const getStepContent = (step) =>{
         switch (step) {
             case 0:
@@ -63,6 +65,7 @@ function UserApplication(props) {
       .then((res)=>{
         if(res.status === 200)
           setActiveStep(activeStep+1);
+          setRegNo(res.data);
       })
       .catch((error)=>{
         alert('Internal server error');
@@ -99,7 +102,7 @@ function UserApplication(props) {
                 </Typography>
                   <Typography variant="subtitle1">
                     Your regestration is done successfully.
-                    Your Application number is: 
+                    Your Application number is: {regNo}
                 </Typography>
                 </React.Fragment>
               ) : (
@@ -129,13 +132,12 @@ function UserApplication(props) {
     )
 }
 
-// const mapStateToProps = state =>{
-//   return{
-//     application: state.application
-//   }
-// }
-// export default connect(
-//   mapStateToProps
-// ) 
-// (UserApplication);
-export default UserApplication;
+const mapStateToProps = state =>{
+  return{
+    application: state.application
+  }
+}
+export default connect(
+  mapStateToProps
+) 
+(UserApplication);
