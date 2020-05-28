@@ -6,6 +6,7 @@ var registrationDetails = mongoose.Schema({
     id_image: String,
     regestration_type: String,
     no_tickets: Number,
+    reg_date: Date,
     reg_no: String
 });
 

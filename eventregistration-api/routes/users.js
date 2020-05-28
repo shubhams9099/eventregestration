@@ -38,9 +38,10 @@ router.post("/apply", async (req,res)=>{
     user.id_image= req.body.id_image;
     user.regestration_type= req.body.regestration_type;
     user.no_tickets= req.body.no_tickets;
+    user.reg_date= new Date();
 
-    await regestrationDetailsSchema.count({},(err,count)=>{
-        user.reg_no='reg-'+count;
+    await regestrationDetailsSchema.countDocuments({},(err,count)=>{
+        user.reg_no='reg-'+(count+1);
     })
     
     await user.save(error =>{
