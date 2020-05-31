@@ -86,6 +86,8 @@ const UserDetails = (props) => {
             autoComplete="fname"
           />
         </Grid>
+        { console.log(new Date().toISOString())
+        }
         <Grid item xs={12} sm={6}>
           <TextField
             required
