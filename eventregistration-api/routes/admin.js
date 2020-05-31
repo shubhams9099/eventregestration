@@ -70,12 +70,28 @@ router.get("/users", async (req, res) => {
   let total_users = await user.countDocuments({}, (err, count) => {
     if (err) throw err;
   });
-  let today_registers = await user.countDocuments(
-    { reg_date: { $eq: new Date()} },
+  let today_registers = await user.aggregate([
+    
+    {$project:{reg_date:{$dateFromString:{dateString: "$reg_date"}}}},
+    {$project:
+        {
+            day:{$dayOfMonth:"$reg_date"},
+            month:{$month:"$reg_date"},
+            year:{$year:"$reg_date"}
+         }
+     },
+     {$match:{month:5}},
+     {$group:{_id:"$day", count:{$sum:1}}},
+     {$sort:{_id:1}}
+         
+],
     (err, count) => {
       if (err) throw err;
     }
   );
+  // var regestrations = today_registers.map((val,index)=>{
+  //   return {day:index, count:val};
+  // })
   res.status("200").json({
     total_users: total_users,
     today_registers: today_registers
