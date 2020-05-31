@@ -31,7 +31,7 @@ export default function AdminLayout() {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" color="inherit">
-            Photos
+            StackHack Admin
           </Typography>
         </Toolbar>
       </AppBar>
