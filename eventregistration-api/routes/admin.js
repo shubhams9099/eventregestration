@@ -1,4 +1,5 @@
 const adminSchema = require("../models/admin.schema");
+const user = require("../models/regestration_details.schema");
 const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
@@ -9,7 +10,7 @@ mongoose.connect(
   { useNewUrlParser: true, useUnifiedTopology: true }
 );
 router.post("/signup", async (req, res) => {
-  let admin = await adminSchema.findOne({ email: req.body.email }, function (
+  let admin = await adminSchema.findOne({ email: req.body.email }, function(
     error,
     result
   ) {
@@ -24,7 +25,7 @@ router.post("/signup", async (req, res) => {
     admin.email = req.body.email;
     admin.password = admin.generateHash(req.body.password);
 
-    await admin.save(function (error) {
+    await admin.save(function(error) {
       if (error) {
         throw error;
       } else {
@@ -40,17 +41,17 @@ router.post("/login", (req, res) => {
   console.log(req.body.email);
 
   let adminpresent = adminSchema
-    .findOne({ email: req.body.email }, function (error, result) {
+    .findOne({ email: req.body.email }, function(error, result) {
       if (error) {
         throw error;
       } else console.log(result);
     })
-    .then(function (admin) {
+    .then(function(admin) {
       if (!admin) {
         return res.send("no user");
       } else {
         console.log(admin);
-        bcrypt.compare(req.body.password, admin.password, function (
+        bcrypt.compare(req.body.password, admin.password, function(
           err,
           result
         ) {
@@ -64,5 +65,20 @@ router.post("/login", (req, res) => {
         });
       }
     });
+});
+router.get("/users", async (req, res) => {
+  let total_users = await user.countDocuments({}, (err, count) => {
+    if (err) throw err;
+  });
+  let today_registers = await user.countDocuments(
+    { reg_date: { $eq: new Date()} },
+    (err, count) => {
+      if (err) throw err;
+    }
+  );
+  res.status("200").json({
+    total_users: total_users,
+    today_registers: today_registers
+  });
 });
 module.exports = router;

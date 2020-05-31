@@ -5,8 +5,9 @@ var registrationDetails = mongoose.Schema({
     phone_no: Number,
     id_image: String,
     regestration_type: String,
-    no_tickets: Number
-
+    no_tickets: Number,
+    reg_date: String,
+    reg_no: String
 });
 
 module.exports = mongoose.model("registration_details", registrationDetails);

@@ -14,6 +14,7 @@ import {
   MenuItem,
   Divider
 } from "@material-ui/core";
+import axios from "axios";
 
 const useStyles = makeStyles(theme => ({
   formControl: {
@@ -38,29 +39,31 @@ const UserDetails = (props) => {
   const handleChange = event => {
     setRegType(event.target.value);
   };
-  const uploadImage = () => {};
+  const uploadImage = () => {
+    const data=new FormData();
+    data.append("image", image);
+    axios.post('http://localhost:8080/user/fileupload',data)
+    .then(response =>{
+      // console.log(response.data.imageUrl); 
+      setInputs({...inputs, 'id_image': response.data.imageUrl});
+    })
+    .catch(error =>{
+      console.log(error);
+    })
+  };
 
   const selectImage = event => {
     // setImage(URL.createObjectURL(event.target.files[0]));
-    setInputs({...inputs, [event.target.name]: URL.createObjectURL(event.target.files[0])})
+    setInputs({...inputs, 'local_image_path': URL.createObjectURL(event.target.files[0])});
+    setImage(event.target.files[0]);
   };
   const classes = useStyles();
   const handleInputs = event => {
     event.persist();
-
-    if(event.target.name === 'id_image'){
-      setInputs(inputs => ({
-        ...inputs,
-        [event.target.name]: image
-      }));
-    }
-    else{
-      setInputs(inputs => ({
-        ...inputs,
-        [event.target.name]: event.target.value
-      }));
-    }
-    
+    setInputs(inputs => ({
+      ...inputs,
+      [event.target.name]: event.target.value
+    }));
   };
 
   useEffect(() => {
@@ -83,6 +86,8 @@ const UserDetails = (props) => {
             autoComplete="fname"
           />
         </Grid>
+        { console.log(new Date().toISOString())
+        }
         <Grid item xs={12} sm={6}>
           <TextField
             required
