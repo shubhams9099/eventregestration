@@ -70,6 +70,8 @@ router.get("/users", async (req, res) => {
   let total_users = await user.countDocuments({}, (err, count) => {
     if (err) throw err;
   });
+  console.log("Retrieving the regestration stats ..");
+  
   let today_registers = await user.aggregate([
     
     {$project:{reg_date:{$dateFromString:{dateString: "$reg_date"}}}},
