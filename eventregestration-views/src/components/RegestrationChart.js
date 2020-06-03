@@ -9,7 +9,7 @@ import { LineChart,Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsiv
 function RegestrationChart() {
 
     const [graphData, setGraphData] = useState([])
-    const [duration, setDuration] = useState("current_month")
+    const [duration, setDuration] = useState("last_month")
     
     const handleChange = (event)=>{
       event.preventDefault()
@@ -17,13 +17,16 @@ function RegestrationChart() {
     } 
 
     useEffect(() => {
-        axios.get('http://localhost:8080/admin/users/', querystring.stringify({duration: duration}))
+        axios.post('http://localhost:8080/admin/users', querystring.stringify({duration: duration}))
         .then((res)=>{
-            if(res.status === 200)
-            setGraphData(res.data.today_registers)
+            if(res.status === 200){
+              setGraphData(res.data.reg_data)
+              
+            }
+            
         })
         .catch((error)=>{
-            alert('Internal server error');
+            alert('Internal server error'+error);
         })
     }, [duration])
   return (
@@ -57,20 +60,18 @@ function RegestrationChart() {
       <ResponsiveContainer width="100%" height={500}>
       <LineChart
         width={1200}
-        height={550}
+        height={450}
         data={graphData}
         margin={{
           top: 5,
           right: 30,
           left: 20,
-          bottom: 5
+          bottom: 20
         }}
       >
-        <CartesianGrid strokeDasharray="1 1" />
-        <XAxis dataKey="_id" interval={1}/>
-        <YAxis />
+        <XAxis dataKey="_id" interval={1} label={{value:"Timeline", position:"bottom"}}/>
+        <YAxis label={{value:"Count" ,angle:-90 }}/>
         <Tooltip />
-        <Legend />
         <Line
           type="monotone"
           dataKey="count"

@@ -35,10 +35,7 @@ router.post("/signup", async (req, res) => {
   }
 });
 router.post("/login", (req, res) => {
-  //admin = new adminSchema();
-  console.log(req.body);
-  //const uemail="\'"+req.body.email+"\'"
-  console.log(req.body.email);
+  console.log("User logged in .");
 
   let adminpresent = adminSchema
     .findOne({ email: req.body.email }, function(error, result) {
@@ -56,9 +53,7 @@ router.post("/login", (req, res) => {
           result
         ) {
           if (result === true) {
-            //req.session.userId = uid();
-            //res.render("user/login", { title: "Login" });
-            return res.send(`logged in`);
+            return res.send({ status: "success", type: "admin" });
           } else {
             return res.send("incorrect password");
           }
@@ -66,37 +61,140 @@ router.post("/login", (req, res) => {
       }
     });
 });
-router.get("/users", async (req, res) => {
+
+router.get("/userstats", async (req, res) => {
   let total_users = await user.countDocuments({}, (err, count) => {
     if (err) throw err;
   });
-  console.log("Retrieving the regestration stats ..");
-  
-  let today_registers = await user.aggregate([
-    
-    {$project:{reg_date:{$dateFromString:{dateString: "$reg_date"}}}},
-    {$project:
-        {
-            day:{$dayOfMonth:"$reg_date"},
-            month:{$month:"$reg_date"},
-            year:{$year:"$reg_date"}
-         }
-     },
-     {$match:{month:5}},
-     {$group:{_id:"$day", count:{$sum:1}}},
-     {$sort:{_id:1}}
-         
-],
+
+  let reg_today = await user.aggregate(
+    [
+      {
+        $project: { reg_date: { $dateFromString: { dateString: "$reg_date" } } }
+      },
+      {
+        $project: {
+          day: { $dayOfMonth: "$reg_date" },
+          month: { $month: "$reg_date" },
+          year: { $year: "$reg_date" }
+        }
+      },
+      {
+        $match: {
+          month: new Date().getMonth() + 1,
+          year: new Date().getFullYear(),
+          day: new Date().getDate()
+        }
+      },
+      { $group: { _id: "null", count: { $sum: 1 } } }
+    ],
     (err, count) => {
       if (err) throw err;
     }
   );
-  // var regestrations = today_registers.map((val,index)=>{
-  //   return {day:index, count:val};
-  // })
+  let count=0;
+  if(reg_today.length >0)
+    count = reg_today[0].count
+
   res.status("200").json({
     total_users: total_users,
-    today_registers: today_registers
+    reg_today: count
   });
+});
+router.post("/users", async (req, res) => {
+  console.log("Retrieving the regestration stats ..");
+
+  const duration = req.body.duration;
+
+  if (duration == "current_month") {
+    let reg_data = await user.aggregate(
+      [
+        {
+          $project: {
+            reg_date: { $dateFromString: { dateString: "$reg_date" } }
+          }
+        },
+        {
+          $project: {
+            day: { $dayOfMonth: "$reg_date" },
+            month: { $month: "$reg_date" },
+            year: { $year: "$reg_date" }
+          }
+        },
+        {
+          $match: {
+            month: new Date().getMonth() + 1,
+            year: new Date().getFullYear()
+          }
+        },
+        { $group: { _id: "$day", count: { $sum: 1 } } },
+        { $sort: { _id: 1 } }
+      ],
+      (err, count) => {
+        if (err) throw err;
+      }
+    );
+
+    res.status("200").json({
+      reg_data: reg_data
+    });
+  } else if (duration == "last_month") {
+    let reg_data = await user.aggregate(
+      [
+        {
+          $project: {
+            reg_date: { $dateFromString: { dateString: "$reg_date" } }
+          }
+        },
+        {
+          $project: {
+            day: { $dayOfMonth: "$reg_date" },
+            month: { $month: "$reg_date" },
+            year: { $year: "$reg_date" }
+          }
+        },
+        {
+          $match: {
+            month: new Date().getMonth(),
+            year: new Date().getFullYear()
+          }
+        },
+        { $group: { _id: "$day", count: { $sum: 1 } } },
+        { $sort: { _id: 1 } }
+      ],
+      (err, count) => {
+        if (err) throw err;
+      }
+    );
+    res.status("200").json({
+      reg_data: reg_data
+    });
+  } else if (duration == "year") {
+    let reg_data = await user.aggregate(
+      [
+        {
+          $project: {
+            reg_date: { $dateFromString: { dateString: "$reg_date" } }
+          }
+        },
+        {
+          $project: {
+            day: { $dayOfMonth: "$reg_date" },
+            month: { $month: "$reg_date" },
+            year: { $year: "$reg_date" }
+          }
+        },
+        { $match: { year: new Date().getFullYear() } },
+        { $group: { _id: "$month", count: { $sum: 1 } } },
+        { $sort: { _id: 1 } }
+      ],
+      (err, count) => {
+        if (err) throw err;
+      }
+    );
+    res.status("200").json({
+      reg_data: reg_data
+    });
+  }
 });
 module.exports = router;

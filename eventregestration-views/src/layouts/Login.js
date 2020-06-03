@@ -6,6 +6,7 @@ import Typography from "@material-ui/core/Typography";
 import { Paper, Grid, TextField, Button } from "@material-ui/core";
 import axios from "axios";
 import { useHistory } from "react-router";
+import { useCookies } from 'react-cookie';
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -40,6 +41,7 @@ const useStyles = makeStyles((theme) => ({
 function Login() {
   const [inputs, setInputs] = useState("");
   //const [password,setPassword] = useState("");
+  const [cookie, setCookie] = useCookies(['user'])
   const classes = useStyles();
   let history = useHistory();
   const handleInputs = (event) => {
@@ -58,9 +60,11 @@ function Login() {
         password: inputs.password,
       })
       .then((response) => {
-        console.log(response.data);
-        if (response.data === "logged in") {
-          history.push("/dashboard");
+        if (response.data.status === "success") {
+          setCookie("user", response.data.type, {
+            maxAge: 3600
+          })
+          history.push("/admin/dashboard");
         }
       });
   };
@@ -99,7 +103,6 @@ function Login() {
                 onChange={handleInputs}
                 value={inputs.password || ""}
                 fullWidth
-                autoComplete="password"
               />
             </Grid>
             <Grid item md={12}>

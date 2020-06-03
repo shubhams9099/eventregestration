@@ -39,6 +39,14 @@ function AdminApplication() {
     <React.Fragment>
       <AdminLayout />
       <Grid container spacing={3}>
+        <Grid item xs={12} md={6}>
+          <Paper className ={classes.root}>
+          </Paper>
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <Paper className ={classes.root}>
+          </Paper>
+        </Grid>
         <Grid item xs={12} md={12}>
           <Paper className={classes.root}>
             <RegestrationChart />

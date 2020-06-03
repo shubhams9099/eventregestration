@@ -5,6 +5,10 @@ import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import IconButton from "@material-ui/core/IconButton";
 import MenuIcon from "@material-ui/icons/Menu";
+import { Button } from "@material-ui/core";
+
+import cookie from 'react-cookies';
+import {useHistory} from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -13,10 +17,24 @@ const useStyles = makeStyles((theme) => ({
   menuButton: {
     marginRight: theme.spacing(2),
   },
+  toolbarButtons: {
+    direction:'rtl',
+    marginLeft: 'auto',
+  },
 }));
+
+
 
 export default function AdminLayout() {
   const classes = useStyles();
+
+  let history = useHistory();
+
+  const handlelogout =()=> {
+    localStorage.clear();
+    cookie.remove('user', { path: '/admin' });
+    history.replace("/admin/login");
+  }
 
   return (
     <div className={classes.root}>
@@ -31,8 +49,16 @@ export default function AdminLayout() {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" color="inherit">
-            StackHack Admin
+            StackHack
           </Typography>
+          <div className={classes.toolbarButtons}>
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={handlelogout}
+            >Log out</Button>
+          </div>
+         
         </Toolbar>
       </AppBar>
     </div>
