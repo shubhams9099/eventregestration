@@ -113,11 +113,12 @@ export default function StickyHeadTable() {
               .map((row) => {
                 return (
                   <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
-                    {columns.map((column) => {
+                    {columns.map((column, key) => {
                       const value = row[column.id];
                       return column.id === "regno" ? (
                         <TableCell
-                          key={column.id}
+                          key={key222222221}
+                          style={{ cursor: "pointer" }}
                           onClick={() => {
                             handleOpen(value);
                           }}
