@@ -15,7 +15,7 @@ import {
   Divider
 } from "@material-ui/core";
 import axios from "axios";
-
+import ErrorDialog from './ErrorDialog'
 const useStyles = makeStyles(theme => ({
   formControl: {
     marginTop: theme.spacing(1),
@@ -35,31 +35,51 @@ const UserDetails = (props) => {
   const [inputs, setInputs] = useState(props.application);
   const [reg_type, setRegType] = useState("");
   const [image,setImage] =useState("");
+
+  const [error, setError] = useState(false);
+  const [diaMessage, setDiaMessage] = useState("");
   
   const handleChange = event => {
     setRegType(event.target.value);
   };
   const uploadImage = () => {
-    const data=new FormData();
-    data.append("image", image);
-    axios.post('http://localhost:8080/user/fileupload',data)
-    .then(response =>{
-      // console.log(response.data.imageUrl); 
-      setInputs({...inputs, 'id_image': response.data.imageUrl});
-    })
-    .catch(error =>{
-      console.log(error);
-    })
+
+    if (!image) {
+      setDiaMessage( 'Please select image.' );
+      setError(true);
+    }
+   
+    if (!image.name.match(/\.(jpeg|png)$/)) {
+      setDiaMessage( 'Please select valid image.' );
+      setError(true);
+    }
+    else{
+      const data=new FormData();
+      data.append("image", image);
+      axios.post('http://localhost:8080/user/fileupload',data)
+      .then(response =>{
+        setInputs({...inputs, 'id_image': response.data.imageUrl});
+      })
+      .catch(error =>{
+        console.log(error);
+      })
+    }
+    
   };
 
   const selectImage = event => {
-    // setImage(URL.createObjectURL(event.target.files[0]));
     setInputs({...inputs, 'local_image_path': URL.createObjectURL(event.target.files[0])});
     setImage(event.target.files[0]);
   };
   const classes = useStyles();
   const handleInputs = event => {
     event.persist();
+    if(event.target.name === 'regestration_type'){
+      if(event.target.value === 'self')
+        inputs.no_tickets =1;
+      else
+        inputs.no_tickets =2;
+    }
     setInputs(inputs => ({
       ...inputs,
       [event.target.name]: event.target.value
@@ -72,7 +92,10 @@ const UserDetails = (props) => {
   }, [inputs])
   return (
     <React.Fragment>
+      {error ?
+              <ErrorDialog message={diaMessage} /> : ""}
       <Typography variant="h6">Personal Details</Typography>
+      
       <Grid container spacing={3}>
         <Grid item md={12}>
           <TextField
@@ -86,8 +109,6 @@ const UserDetails = (props) => {
             autoComplete="fname"
           />
         </Grid>
-        { console.log(new Date().toISOString())
-        }
         <Grid item xs={12} sm={6}>
           <TextField
             required
@@ -168,14 +189,13 @@ const UserDetails = (props) => {
             id="no_tickets"
             name="no_tickets"
             label="No of tickets"
+            style={inputs.regestration_type === 'self' ? {disabled:true}:{}}
             onChange={handleInputs}
             value={inputs.no_tickets || ""}
             fullWidth
           />
         </Grid>
-        
       </Grid>
-      
     </React.Fragment>
   );
 };

@@ -7,6 +7,8 @@ import { Paper, Grid, TextField, Button } from "@material-ui/core";
 import axios from "axios";
 import { useHistory } from "react-router";
 import { useCookies } from 'react-cookie';
+import ErrorDialog from '../components/ErrorDialog';
+import querytring from 'querystring';
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -40,8 +42,10 @@ const useStyles = makeStyles((theme) => ({
 
 function Login() {
   const [inputs, setInputs] = useState("");
-  //const [password,setPassword] = useState("");
   const [cookie, setCookie] = useCookies(['user'])
+
+  const [error, setError] = useState(false);
+  const [diaMessage, setDiaMessage] = useState("");
   const classes = useStyles();
   let history = useHistory();
   const handleInputs = (event) => {
@@ -51,14 +55,17 @@ function Login() {
       [event.target.name]: event.target.value,
     }));
   };
-  const handleSubmit = () => {
-    //console.log(this.state.request_data)
-
+  const config = {
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    }
+  }
+  const handleSubmit = (event) => {
+    event.preventDefault();
     axios
-      .post("http://localhost:8080/admin/login", {
-        email: inputs.email,
-        password: inputs.password,
-      })
+      .post("http://localhost:8080/admin/login", querytring.stringify({
+        inputs
+      }),config)
       .then((response) => {
         if (response.data.status === "success") {
           setCookie("user", response.data.type, {
@@ -66,10 +73,16 @@ function Login() {
           })
           history.push("/admin/dashboard");
         }
+        else{
+          setError(true);
+          setDiaMessage("Invalid credentials !");
+        }
       });
   };
   return (
     <div>
+      {error ?
+              <ErrorDialog message={diaMessage} /> : ""}
       <AppBar position="static">
         <Toolbar>
           <Typography variant="h6" className={classes.title}>
@@ -79,6 +92,7 @@ function Login() {
       </AppBar>
       <div className={classes.layout}>
         <Paper className={classes.paper} elevation={5}>
+          <form id="user-login" onSubmit={handleSubmit}>
           <Typography variant="h6">ADMIN LOGIN</Typography>
           <Grid container spacing={5}>
             <Grid item md={12}>
@@ -109,12 +123,13 @@ function Login() {
               <Button
                 variant="contained"
                 color="primary"
-                onClick={handleSubmit}
+                type="submit"
               >
                 Login
               </Button>
             </Grid>
           </Grid>
+          </form>
         </Paper>
       </div>
     </div>

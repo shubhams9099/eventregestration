@@ -92,13 +92,22 @@ router.get("/userstats", async (req, res) => {
       if (err) throw err;
     }
   );
-  let count=0;
-  if(reg_today.length >0)
-    count = reg_today[0].count
-
+  let count = 0;
+  
+  if (reg_today.length > 0){
+    count = reg_today[0].count;
+  } 
+  
+  let total_tickets = await user.aggregate(
+    [{ $group: { _id: "null", no_tickets: { $sum: "$no_tickets" } } }],
+    (err, count) => {
+      if (err) throw err;
+    }
+  );
   res.status("200").json({
     total_users: total_users,
-    reg_today: count
+    reg_today: count,
+    total_tickets: total_tickets[0].no_tickets
   });
 });
 router.post("/users", async (req, res) => {

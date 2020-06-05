@@ -8,6 +8,8 @@ import { Paper, Typography, StepButton, Stepper, Button, Step, StepLabel } from 
 import { makeStyles } from '@material-ui/core/styles';
 import UserDetails from '../../components/UserDetails';
 import Review from '../../components/Review'; 
+import ErrorDialog from '../../components/ErrorDialog';
+
 const useStyles = makeStyles(theme => ({
     appBar: {
         position: 'relative',
@@ -45,6 +47,9 @@ function UserApplication(props) {
 
     const steps = ['Your Details', 'Review your details'];
 
+    const [error, setError] = useState(false);
+    const [diaMessage, setDiaMessage] = useState("");
+    
     const [activeStep, setActiveStep] = useState(0)
 
     const [regNo, setRegNo] = useState("")
@@ -61,22 +66,37 @@ function UserApplication(props) {
     };
 
     const submitApplication =()=>{
-      axios.post('http://localhost:8080/user/apply',querystring.stringify(props.application))
-      .then((res)=>{
-        if(res.status === 200)
-          setActiveStep(activeStep+1);
-          setRegNo(res.data);
-      })
-      .catch((error)=>{
-        alert('Internal server error');
-      })
+      // setError(false);
+      if(props.application.fullname === undefined || props.application.phone_no === undefined || props.application.email_id === undefined || props.application.local_image_path === undefined || props.application.regestration_type === undefined || props.application.no_tickets === undefined){
+        setError(true);
+        setDiaMessage("Please enter the required fields");
+      }
+        
+      else if(props.application.no_tickets <=0){
+        setError(true);
+        setDiaMessage( "Please enter the valid number of tickets" );
+      }
+      else{
+        axios.post('http://localhost:8080/user/apply',querystring.stringify(props.application))
+        .then((res)=>{
+          if(res.status === 200)
+            setActiveStep(activeStep+1);
+            setRegNo(res.data);
+        })
+        .catch((error)=>{
+          alert('Internal server error');
+        })
+        console.log("error found");
+        
+      }
     };
-    const handleNext = () => {
+    const handleNext = (event) => {
+      
         if (activeStep === 1) {
-          submitApplication();
+            submitApplication();
         }
         else {
-          setActiveStep(activeStep + 1);
+            setActiveStep(activeStep + 1);
         }
       };
       const handleBack = () => {
@@ -85,6 +105,8 @@ function UserApplication(props) {
     return (
         <React.Fragment>
             <UserDefaultLayout/>
+            {error ?
+              <ErrorDialog message={diaMessage} /> : ""}
             <div className={classes.layout}>
             <Paper className={classes.paper}>
             <Stepper activeStep={activeStep} className={classes.stepper} alternativeLabel>
@@ -107,7 +129,8 @@ function UserApplication(props) {
                 </React.Fragment>
               ) : (
                   <React.Fragment>
-                    {getStepContent(activeStep)}
+                    {
+                      getStepContent(activeStep)}
                     <div className={classes.buttons}>
                       {activeStep !== 0 && (
                         <Button onClick={handleBack} className={classes.button}>
