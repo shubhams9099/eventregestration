@@ -1,171 +1,122 @@
-import React from "react";
-import { makeStyles } from "@material-ui/core/styles";
-import Paper from "@material-ui/core/Paper";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableContainer from "@material-ui/core/TableContainer";
-import TableHead from "@material-ui/core/TableHead";
-import TablePagination from "@material-ui/core/TablePagination";
-import TableRow from "@material-ui/core/TableRow";
+import React, { useEffect, useState } from "react";
+import MaterialTable from "material-table";
+import axios from "axios";
+import { Button } from "@material-ui/core";
 import Modal from "@material-ui/core/Modal";
-import Backdrop from "@material-ui/core/Backdrop";
-import Fade from "@material-ui/core/Fade";
-
-const columns = [
-  { id: "regno", label: "Registeration No.", minWidth: 100 },
-  { id: "date", label: "Date", minWidth: 100 },
-  {
-    id: "name",
-    label: "Name",
-    minWidth: 100,
-  },
-];
-
-function createData(regno, date, name) {
-  return { regno, date, name };
-}
-
-const rows = [
-  createData("India", "IN", 1324171354, 3287263),
-  createData("China", "CN", 1403500365, 9596961),
-  createData("Italy", "IT", 60483973, 301340),
-  createData("United States", "US", 327167434, 9833520),
-  createData("Canada", "CA", 37602103, 9984670),
-  createData("Australia", "AU", 25475400, 7692024),
-  createData("Germany", "DE", 83019200, 357578),
-  createData("Ireland", "IE", 4857000, 70273),
-  createData("Mexico", "MX", 126577691, 1972550),
-  createData("Japan", "JP", 126317000, 377973),
-  createData("France", "FR", 67022000, 640679),
-  createData("United Kingdom", "GB", 67545757, 242495),
-  createData("Russia", "RU", 146793744, 17098246),
-  createData("Nigeria", "NG", 200962417, 923768),
-  createData("Brazil", "BR", 210147125, 8515767),
-];
+import { makeStyles } from "@material-ui/core/styles";
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import DialogTitle from "@material-ui/core/DialogTitle";
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    marginLeft: "5%",
-    marginRight: "5%",
-    marginTop: "2%",
-  },
-  container: {
-    maxHeight: 440,
-  },
-  modal: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  paper: {
-    backgroundColor: theme.palette.background.paper,
-    border: "2px solid #000",
-    boxShadow: theme.shadows[5],
-    padding: theme.spacing(2, 4, 3),
+  modalbody: {
+    margin: theme.spacing(3),
+    backgroundColor: "white",
+    marginBottom: theme.spacing(3),
+    padding: theme.spacing(2),
+    [theme.breakpoints.up(600 + theme.spacing(3) * 2)]: {
+      marginTop: theme.spacing(6),
+      marginBottom: theme.spacing(6),
+      padding: theme.spacing(3),
+    },
   },
 }));
-
-export default function StickyHeadTable() {
+export default function Table() {
   const classes = useStyles();
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
-  const [data, setData] = React.useState("");
-
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(+event.target.value);
-    setPage(0);
-  };
   const [open, setOpen] = React.useState(false);
-
-  const handleOpen = (value) => {
+  const [data, setdata] = useState({});
+  const [state, setState] = useState({
+    columns: [
+      { title: "Registeration Id", field: "reg_no" },
+      { title: "Name", field: "full_name" },
+      { title: "Date", field: "reg_date" },
+      {
+        title: "",
+        field: "",
+        render: (rowData) => (
+          <div>
+            <Button
+              variant="contained"
+              color="primary"
+              size="small"
+              //onClick={handleData(rowData)}
+            >
+              View Application
+            </Button>
+          </div>
+        ),
+      },
+      // {
+      //   title: "Birth Place",
+      //   field: "birthCity",
+      //   lookup: { 34: "İstanbul", 63: "Şanlıurfa" },
+      // },
+    ],
+  });
+  const handleOpen = () => {
     setOpen(true);
-    setData(value);
   };
-
   const handleClose = () => {
     setOpen(false);
   };
+  const handleData = (rowData) => {
+    setdata(rowData);
+    handleOpen();
+  };
+  useEffect(() => {
+    axios
+      .get("http://localhost:8080/admin/userdata")
+      .then((res) => {
+        if (res.status === 200) {
+          setState((prevState) => ({
+            ...prevState,
+            data: res.data,
+          }));
+          console.log(state);
+        }
+      })
+      .catch((error) => {
+        alert("Internal server error" + error);
+      });
+  }, []);
   return (
-    <Paper className={classes.root}>
-      <TableContainer className={classes.container}>
-        <Table stickyHeader aria-label="sticky table">
-          <TableHead>
-            <TableRow>
-              {columns.map((column) => (
-                <TableCell
-                  key={column.id}
-                  align={column.align}
-                  style={{ minWidth: column.minWidth }}
-                >
-                  {column.label}
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {rows
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((row) => {
-                return (
-                  <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
-                    {columns.map((column, key) => {
-                      const value = row[column.id];
-                      return column.id === "regno" ? (
-                        <TableCell
-                          key={key222222221}
-                          style={{ cursor: "pointer" }}
-                          onClick={() => {
-                            handleOpen(value);
-                          }}
-                          align={column.align}
-                        >
-                          {value}
-                        </TableCell>
-                      ) : (
-                        <TableCell key={column.id} align={column.align}>
-                          {value}
-                        </TableCell>
-                      );
-                    })}
-                  </TableRow>
-                );
-              })}
-          </TableBody>
-          <Modal
-            aria-labelledby="transition-modal-title"
-            aria-describedby="transition-modal-description"
-            className={classes.modal}
-            open={open}
-            onClose={handleClose}
-            closeAfterTransition
-            BackdropComponent={Backdrop}
-            BackdropProps={{
-              timeout: 500,
-            }}
-          >
-            <Fade in={open}>
-              <div className={classes.paper}>
-                <h2 id="transition-modal-title">Transition modal</h2>
-                <p id="transition-modal-description">{data}</p>
-              </div>
-            </Fade>
-          </Modal>
-        </Table>
-      </TableContainer>
-      <TablePagination
-        rowsPerPageOptions={[10, 25, 100]}
-        component="div"
-        count={rows.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onChangePage={handleChangePage}
-        onChangeRowsPerPage={handleChangeRowsPerPage}
+    <div>
+      <MaterialTable
+        title="Editable Example"
+        onRowClick={(event, rowData) => handleData(rowData)}
+        columns={state.columns}
+        data={state.data}
       />
-    </Paper>
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="simple-modal-title"
+        aria-describedby="simple-modal-description"
+      >
+        <div className={classes.modalbody}>
+          {data.reg_id}
+          {data.full_name} <br />
+          {data.reg_date}
+          <br />
+          {data.email_id}
+          <br />
+          {data.regestration_type}
+          <br />
+          {data.phone_no}
+          <br />
+          {data.no_tickets}
+          <br />
+          {data.id_image}
+          <br />
+          <img
+            src={"http://localhost:8080/admin/userimage/" + data.id_image}
+            height="25%"
+            width="25%"
+          />
+        </div>
+      </Modal>
+    </div>
   );
 }

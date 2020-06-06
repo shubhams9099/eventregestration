@@ -1,68 +1,41 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This Event Management project is developed having backend as nodejs and frontend using reactjs.
+This repository is divided in two parts eventregistration-view(frontend) and eventregistration-api(backend)
 
-## Available Scripts
+eventregistration-api:
+This project folder contains the api route calls and the necessary models created.
 
-In the project directory, you can run:
+models:
+contains the schema of database tables.
 
-### `npm start`
+routes:
+admin.js contains all the apis related to admin side panel.
+users.js contains all the apis related to user side.
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+user-images:
+contains the images uploaded while registration.
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+eventregistration-Views:
+components:-
+this contains the cmponents like:-
 
-### `npm test`
+RegistrationChart.js - the admin side chart component for viewing details.
+Review.js - this is a component for the review application after the registration.
+UserDetails.js - component has a form to get user details.
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+layouts:-
+AdmoinLayout.js is the layout for admin side.
+UserLayout is the layout for veuser side.
+Login.js - contains the login layout.
+Table.js - contains the table layout.
 
-### `npm run build`
+utils:-
+redux:
+Contains the code to use the react-redux stores,type,action,reducers.
+ProtectedHeader is used to maintain session of admin by setting cookie.
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+views:-
+admin:
+Contains the views of admin:
+AdminApplication is the layout to view admin side application.
+user:
+UserApplication is the view for the user side application.
